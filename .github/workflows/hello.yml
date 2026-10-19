@@ -1,4 +1,3 @@
-
 name: Hello GitHub Actions
 
 on:
@@ -15,27 +14,13 @@ on:
 
 jobs:
   hello:
-    name: Architecture, Contexts and Conditions
     runs-on: ubuntu-latest
-
-    env:
-      WORKFLOW_GREETING: "Hello from the env context"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Print greeting
         run: echo "Hello from GitHub Actions!"
-
-      - name: Show workflow architecture
-        run: |
-          echo "Workflow: $GITHUB_WORKFLOW"
-          echo "Event: $GITHUB_EVENT_NAME"
-          echo "Job: $GITHUB_JOB"
-          echo "Runner: $RUNNER_OS"
-          echo "Step: Print greeting"
-          echo "Action: actions/checkout@v4 (checkout repository)"
 
       - name: Show event details
         run: |
@@ -54,46 +39,3 @@ jobs:
         run: |
           echo "Repository dispatch trigger is working!"
           echo "Message: $MESSAGE"
-          echo "Event type: ${{ github.event.action }}"
-
-      - name: Show workflow contexts
-        env:
-          REPOSITORY_VARIABLE: ${{ vars.DEMO_VARIABLE }}
-        run: |
-          echo "Actor: ${{ github.actor }}"
-          echo "Event: ${{ github.event_name }}"
-          echo "Runner OS: ${{ runner.os }}"
-          echo "Repository variable: $REPOSITORY_VARIABLE"
-          echo "Environment context: $WORKFLOW_GREETING"
-
-      - name: Check event condition
-        if: ${{ contains(fromJSON('["push","pull_request","repository_dispatch"]'), github.event_name) }}
-        run: echo "The event matches our condition!"
-
-      - name: Run on success
-        if: ${{ success() }}
-        run: echo "success() is true: previous steps succeeded."
-
-      - name: Always run this step
-        if: ${{ always() }}
-        run: echo "always() step executed."
-
-  failure_demo:
-    name: Demonstrate failure() handling
-    runs-on: ubuntu-latest
-    continue-on-error: true
-
-    steps:
-      - name: Simulate a controlled failure
-        id: controlled_failure
-        run: |
-          echo "Simulating a failure for educational purposes."
-          exit 1
-
-      - name: Handle the failure
-        if: ${{ failure() }}
-        run: echo "failure() is true: the earlier step failed."
-
-      - name: Always run after the failure
-        if: ${{ always() }}
-        run: echo "always() ran after the controlled failure."
