@@ -4,22 +4,22 @@ on:
   workflow_dispatch:
 
 jobs:
-  # Job 1: contains(), success(), always() on a passing job
+ 
   conditionals:
     name: contains, success and always
     runs-on: ubuntu-latest
     steps:
       - name: contains() - branch ref
         if: ${{ contains(github.ref, 'main') }}
-        run: echo "contains() is true: running on main"
+        run: echo "contains() is true - running on main"
 
       - name: contains() - event name
         if: ${{ contains(github.event_name, 'workflow_dispatch') }}
-        run: echo "contains() is true: manual trigger"
+        run: echo "contains() is true - manual trigger"
 
       - name: success()
         if: ${{ success() }}
-        run: echo "success() is true: previous steps succeeded"
+        run: echo "success() is true - previous steps succeeded"
 
       - name: always()
         if: ${{ always() }}
@@ -42,7 +42,7 @@ jobs:
 
       - name: failure() - runs
         if: ${{ failure() }}
-        run: echo "failure() is true: a previous step failed"
+        run: echo "failure() is true - a previous step failed"
 
       - name: always() - runs
         if: ${{ always() }}
