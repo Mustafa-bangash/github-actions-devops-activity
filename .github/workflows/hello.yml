@@ -24,3 +24,6 @@ jobs:
           echo "Triggered by: $GITHUB_ACTOR"
           echo "Event: $GITHUB_EVENT_NAME"
           echo "Branch: $GITHUB_REF"
+
+      - name: Test pull request
+        run: echo "Pull request trigger is working!"
