@@ -26,16 +26,20 @@ jobs:
           Write-Host "PowerShell version - $($PSVersionTable.PSVersion)"
 
       - name: Install a package with Chocolatey
-        run: |
-          choco install wget -y
-          wget --version
-
-      - name: Run a PowerShell script
         shell: powershell
         run: |
-          $greeting = "Hello from PowerShell on Windows"
-          Write-Host $greeting
-          Get-ChildItem Env:RUNNER_* | Format-Table -AutoSize
+          choco --version
+          $attempts = 0
+          do {
+            $attempts++
+            choco install wget -y --no-progress
+            if ($LASTEXITCODE -eq 0) { break }
+            Write-Host "Attempt $attempts failed, retrying in 15 seconds..."
+            Start-Sleep -Seconds 15
+          } while ($attempts -lt 4)
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          choco list --local-only
+          wget.exe --version
 
   macos-job:
     name: macOS runner (Swift compilation)
