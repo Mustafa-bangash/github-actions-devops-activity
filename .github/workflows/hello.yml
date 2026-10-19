@@ -5,6 +5,11 @@ on:
   push:
     branches:
       - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
 
 jobs:
   hello:
@@ -14,5 +19,8 @@ jobs:
       - name: Print greeting
         run: echo "Hello from GitHub Actions!"
 
-      - name: Show username
-        run: echo "Triggered by $GITHUB_ACTOR"
+      - name: Show event details
+        run: |
+          echo "Triggered by: $GITHUB_ACTOR"
+          echo "Event: $GITHUB_EVENT_NAME"
+          echo "Branch: $GITHUB_REF"
