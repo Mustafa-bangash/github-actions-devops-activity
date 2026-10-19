@@ -29,17 +29,22 @@ jobs:
         shell: powershell
         run: |
           choco --version
-          $attempts = 0
-          do {
-            $attempts++
+          $shim = "C:\ProgramData\chocolatey\bin\wget.exe"
+          $installed = $false
+          foreach ($i in 1..5) {
+            Write-Host "Attempt $i of 5"
             choco install wget -y --no-progress
-            if ($LASTEXITCODE -eq 0) { break }
-            Write-Host "Attempt $attempts failed, retrying in 15 seconds..."
-            Start-Sleep -Seconds 15
-          } while ($attempts -lt 4)
-          if ($LASTEXITCODE -ne 0) { exit 1 }
-          choco list --local-only
-          wget.exe --version
+            if (Test-Path $shim) { $installed = $true; break }
+            Write-Host "wget.exe not found, waiting before retry..."
+            Start-Sleep -Seconds (20 * $i)
+          }
+          choco list
+          if ($installed) {
+            & $shim --version | Select-Object -First 1
+          } else {
+            Write-Host "Chocolatey feed still unavailable"
+            exit 1
+          }
 
   macos-job:
     name: macOS runner (Swift compilation)
