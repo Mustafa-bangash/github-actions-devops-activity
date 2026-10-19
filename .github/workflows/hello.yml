@@ -10,6 +10,8 @@ on:
     branches:
       - main
       - dev
+  repository_dispatch:
+    types: [external_test]
 
 jobs:
   hello:
@@ -26,4 +28,14 @@ jobs:
           echo "Branch: $GITHUB_REF"
 
       - name: Test pull request
+        if: github.event_name == 'pull_request'
         run: echo "Pull request trigger is working!"
+
+      - name: Test repository dispatch
+        if: github.event_name == 'repository_dispatch'
+        env:
+          MESSAGE: ${{ github.event.client_payload.message }}
+        run: |
+          echo "Repository dispatch trigger is working!"
+          echo "Message: $MESSAGE"
+          echo "Event type: ${{ github.event.action }}"
