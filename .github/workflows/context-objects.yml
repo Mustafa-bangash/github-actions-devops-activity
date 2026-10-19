@@ -1,0 +1,20 @@
+name: Module 3 Step 2 - Context Objects
+
+on:
+  workflow_dispatch:
+
+env:
+  WORKFLOW_GREETING: "Hello from the env context"
+
+jobs:
+  contexts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print context objects
+        run: |
+          echo "github.actor      = ${{ github.actor }}"
+          echo "github.event_name = ${{ github.event_name }}"
+          echo "github.repository = ${{ github.repository }}"
+          echo "runner.os         = ${{ runner.os }}"
+          echo "vars.DEMO_VARIABLE = ${{ vars.DEMO_VARIABLE }}"
+          echo "env.WORKFLOW_GREETING = ${{ env.WORKFLOW_GREETING }}"
