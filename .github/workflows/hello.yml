@@ -39,3 +39,26 @@ jobs:
           echo "Repository dispatch trigger is working!"
           echo "Message: $MESSAGE"
           echo "Event type: ${{ github.event.action }}"
+
+
+      - name: Show workflow contexts
+        env:
+          REPOSITORY_VARIABLE: ${{ vars.DEMO_VARIABLE }}
+        run: |
+          echo "Actor: ${{ github.actor }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Runner OS: ${{ runner.os }}"
+          echo "Repository variable: $REPOSITORY_VARIABLE"
+
+      - name: Check event condition
+        if: ${{ contains(fromJSON('["push","pull_request","repository_dispatch"]'), github.event_name) }}
+        run: echo "The event matches our condition!"
+
+      - name: Run on success
+        if: ${{ success() }}
+        run: echo "Previous steps succeeded!"
+
+      - name: Always run this step
+        if: ${{ always() }}
+        run: echo "This step runs even if an earlier step fails or is cancelled."
+
