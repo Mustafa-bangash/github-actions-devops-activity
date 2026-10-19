@@ -1,0 +1,56 @@
+name: Multi-OS Runners
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ubuntu-job:
+    name: Ubuntu runner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show Ubuntu details
+        run: |
+          echo "Runner OS - $RUNNER_OS"
+          cat /etc/os-release
+          uname -a
+
+  windows-job:
+    name: Windows runner (Choco and PowerShell)
+    runs-on: windows-latest
+    steps:
+      - name: Show Windows details (PowerShell)
+        shell: powershell
+        run: |
+          Write-Host "Runner OS - $env:RUNNER_OS"
+          Write-Host "OS version - $([System.Environment]::OSVersion.VersionString)"
+          Write-Host "PowerShell version - $($PSVersionTable.PSVersion)"
+
+      - name: Install a package with Chocolatey
+        run: |
+          choco install wget -y
+          wget --version
+
+      - name: Run a PowerShell script
+        shell: powershell
+        run: |
+          $greeting = "Hello from PowerShell on Windows"
+          Write-Host $greeting
+          Get-ChildItem Env:RUNNER_* | Format-Table -AutoSize
+
+  macos-job:
+    name: macOS runner (Swift compilation)
+    runs-on: macos-latest
+    steps:
+      - name: Show macOS details
+        run: |
+          echo "Runner OS - $RUNNER_OS"
+          sw_vers
+          swift --version
+
+      - name: Compile and run a Swift program
+        run: |
+          cat > hello.swift << 'EOF'
+          print("Hello from Swift on macOS!")
+          EOF
+          swiftc hello.swift -o hello
+          ./hello
