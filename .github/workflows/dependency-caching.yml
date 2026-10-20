@@ -1,0 +1,39 @@
+name: Dependency Caching
+
+on:
+  workflow_dispatch:
+
+jobs:
+  cache-demo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cache-demo
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Cache npm dependencies
+        id: npm-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('cache-demo/package.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+
+      - name: Cache hit - dependencies restored from cache
+        if: ${{ steps.npm-cache.outputs.cache-hit == 'true' }}
+        run: echo "CACHE HIT - dependencies were restored"
+
+      - name: Cache miss - downloading dependencies
+        if: ${{ steps.npm-cache.outputs.cache-hit != 'true' }}
+        run: echo "CACHE MISS - dependencies will be downloaded and saved"
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
