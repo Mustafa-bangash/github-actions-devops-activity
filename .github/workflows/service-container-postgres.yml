@@ -1,0 +1,39 @@
+name: Service Container PostgreSQL
+
+on:
+  workflow_dispatch:
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: student
+          POSTGRES_PASSWORD: student123
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U student -d testdb"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      PGPASSWORD: student123
+
+    steps:
+      - name: Show running service container
+        run: docker ps
+
+      - name: Create table and insert data
+        run: |
+          psql -h localhost -p 5432 -U student -d testdb -c "CREATE TABLE courses (id SERIAL PRIMARY KEY, name TEXT, module INT);"
+          psql -h localhost -p 5432 -U student -d testdb -c "INSERT INTO courses (name, module) VALUES ('GitHub Actions', 6), ('Docker', 7);"
+
+      - name: Run integration test query
+        run: |
+          psql -h localhost -p 5432 -U student -d testdb -c "SELECT * FROM courses;"
+          psql -h localhost -p 5432 -U student -d testdb -c "SELECT COUNT(*) AS total_courses FROM courses;"
