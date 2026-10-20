@@ -1,14 +1,12 @@
-
 name: Self-Hosted Runner
 
-"on":
+on:
   workflow_dispatch:
 
 jobs:
   self-hosted-job:
     name: Job on my own machine
     runs-on: [self-hosted, devops-poc]
-
     steps:
       - name: Show runner details
         run: |
@@ -18,5 +16,4 @@ jobs:
           echo "Hostname - $(hostname)"
           echo "Logged-in user - $(whoami)"
           echo "Working directory - $PWD"
-          cat /etc/os-release | head -2
-
+          head -2 /etc/os-release
